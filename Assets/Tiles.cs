@@ -22,22 +22,38 @@ public class Tiles : MonoBehaviour
     private Color red = Color.red;
     private Color green = Color.green;
     public AudioSource beep;
+    public AudioSource badbeep;
     public AudioSource losebeep;
+    public AudioSource countdown;
     public Transform player;
 
     public float time;
+    public float density;
+    private Player playercode;
+    
 
     void Start()
     {
-
+        playercode = FindObjectOfType<Player>();
         MakeTiles();
 
 
 
-        StartCoroutine(idk());
+       StartGame();
         //flash(Color.yellow, 2, 0.5f);
         //MakeRoom();
         //lose();
+
+    }
+
+
+    void StartGame(){
+        StartCoroutine(waitforstart());
+    }
+    IEnumerator waitforstart(){
+        countdown.Play();
+        yield return new WaitForSeconds(3);
+        StartCoroutine(changingtiles());
     }
 
     void MakeTiles(){
@@ -71,25 +87,40 @@ public class Tiles : MonoBehaviour
 
 
 
-    IEnumerator idk(){
+    IEnumerator changingtiles(){
         bool running = true;
 
+        ChangeTiles(density);
         while(running){
             
-            yield return new WaitForSeconds(3.5f);
+            yield return new WaitForSeconds(time - 0.5f);
 
             if(!CheckIfRed()){
                beep.Play();
-               yield return new WaitForSeconds(0.5f);
-               ChangeTiles(0.95f);
+               //yield return new WaitForSeconds(0.5f);
+               
 
             }
             else{
-                turnofftiles();
+                playercode.AddHearts(-1);
+                if(playercode.hearts<=0){
+                    lose();
+                    turnofftiles();
+                    running=false;
+                    losebeep.Play();
+                }
+                else{
+                    badbeep.Play();
+                }
                 
-                lose();
-                running=false;
             }
+            yield return new WaitForSeconds(0.5f);
+            ChangeTiles(density);
+
+            time-=0.05f;
+            density+=0.05f;
+            density = Mathf.Clamp(density, 0, 0.99f);
+            time = Mathf.Clamp(time, 0.5f, 10);
             
 
         }
@@ -104,6 +135,7 @@ public class Tiles : MonoBehaviour
         int count = Mathf.RoundToInt(length*density);
         count = Mathf.Clamp(count, 0, length-1);
         
+        
 
         int temp;
         for (int i = 0; i < count; i++)
@@ -117,8 +149,10 @@ public class Tiles : MonoBehaviour
 
         for (int i = 0; i < length; i++)
         {
-            tiles[i].tag="Untagged";
-            tileMats[i].SetColor("_EmissionColor", green);
+            if(!ints.Contains(i)){
+                tiles[i].tag="Untagged";
+                tileMats[i].SetColor("_EmissionColor", green);
+            }
         }
 
         foreach (int ind in ints)
@@ -155,7 +189,7 @@ public class Tiles : MonoBehaviour
                 
                 return true;
             }else{
-                showtile(hit);
+                //showtile(hit);
             }
         }
         return false;
@@ -164,7 +198,7 @@ public class Tiles : MonoBehaviour
 
 
     void lose(){
-        losebeep.Play();
+       
          foreach (Material mat in tileMats)
         {
             completed=0;

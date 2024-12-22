@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using UnityEngine.UI;
 public class Player : MonoBehaviour
 {
   
@@ -10,11 +11,18 @@ public class Player : MonoBehaviour
     public float lookSpeedY = 2f; 
     private Transform playerCamera; 
     private CharacterController controller;
+    public int maxhearts;
+    public int hearts;
+    public List<Image> heartimages;
+    public Sprite heartSprite;
+    public Color fullheart;
+    public Color emptyheart;
 
     private float rotationX = 0f; 
     
 
     void Start(){
+        hearts=maxhearts;
         playerCamera = Camera.main.GetComponent<Transform>();
         controller = GetComponent<CharacterController>();
         Cursor.visible = false; 
@@ -30,7 +38,22 @@ public class Player : MonoBehaviour
         LookAround();
     }
 
+    public void AddHearts(int amount){
+        hearts+=amount;
 
+
+
+        int count = heartimages.Count;
+        for (int i = count-1; i >= 0; i--)
+        {
+            if(i<=hearts-1){
+                heartimages[i].color=fullheart;
+            }
+            else{
+                heartimages[i].color=emptyheart;
+            }
+        }
+    }
     void MovePlayer()
     {
         float moveDirectionX = Input.GetAxis("Horizontal");
@@ -40,7 +63,6 @@ public class Player : MonoBehaviour
         Vector3 move = transform.right * moveDirectionX + transform.forward * moveDirectionZ;
 
         controller.SimpleMove(move*moveSpeed);
-       // transform.Translate(move * moveSpeed * Time.deltaTime, Space.World);
     }
 
 
