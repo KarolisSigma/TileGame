@@ -8,6 +8,10 @@ using UnityEngine;
 public class Tiles : MonoBehaviour
 {
     public Material sharedMat;
+    private Material greenmat;
+    private Material redmat;
+    private Material blackmat;
+    public Material sharedmatduplicate;
     public GameObject prefab;
     public Vector2 size;
     public Transform parent;
@@ -16,6 +20,7 @@ public class Tiles : MonoBehaviour
 
     private List<GameObject> tiles =new List<GameObject>();
     private List<Material> tileMats = new List<Material>();
+    private List<Renderer> tileRenderers = new List<Renderer>();
 
 
     private int emission=2;
@@ -30,10 +35,30 @@ public class Tiles : MonoBehaviour
     public float time;
     public float density;
     private Player playercode;
+
+   
     
+
 
     void Start()
     {
+        greenmat = new Material(sharedMat);
+        greenmat.SetColor("_EmissionColor", Color.green*emission);
+        greenmat.enableInstancing = false;
+
+        redmat = new Material(sharedMat);
+        redmat.SetColor("_EmissionColor", Color.red*emission);
+        redmat.enableInstancing=false;
+
+        blackmat = new Material(sharedMat);
+        blackmat.SetColor("_EmissionColor", Color.black*0);
+        blackmat.enableInstancing=false;
+
+
+        sharedmatduplicate = new Material(sharedMat);
+        sharedmatduplicate.SetColor("_EmissionColor", Color.black*0);
+        sharedmatduplicate.enableInstancing=false;
+
         playercode = FindObjectOfType<Player>();
         MakeTiles();
 
@@ -67,12 +92,14 @@ public class Tiles : MonoBehaviour
 
                 GameObject g = Instantiate(prefab, new Vector3(x-(size.x-1)/2f, -0.5f, z-(size.y-1)/2f), Quaternion.identity);
                 g.name = iteration.ToString();
-                Material mat = new Material(sharedMat);
-                mat.SetColor("_EmissionColor", Color.black);
-                g.GetComponent<Renderer>().material = mat;
+
+                g.isStatic=true;
+                Renderer renderer =g.GetComponent<Renderer>();
+                renderer.sharedMaterial=blackmat;
+
+                tileRenderers.Add(renderer);
                 g.transform.SetParent(parent);
                 tiles.Add(g);
-                tileMats.Add(mat);
                 iteration++;
             }
         }
@@ -91,6 +118,7 @@ public class Tiles : MonoBehaviour
         bool running = true;
 
         ChangeTiles(density);
+
         while(running){
             
             yield return new WaitForSeconds(time - 0.5f);
@@ -104,10 +132,11 @@ public class Tiles : MonoBehaviour
             else{
                 playercode.AddHearts(-1);
                 if(playercode.hearts<=0){
-                    lose();
                     turnofftiles();
+                    lose();
                     running=false;
                     losebeep.Play();
+                    
                 }
                 else{
                     badbeep.Play();
@@ -115,7 +144,9 @@ public class Tiles : MonoBehaviour
                 
             }
             yield return new WaitForSeconds(0.5f);
-            ChangeTiles(density);
+            if(running){
+                ChangeTiles(density);
+            }
 
             time-=0.05f;
             density+=0.05f;
@@ -151,14 +182,16 @@ public class Tiles : MonoBehaviour
         {
             if(!ints.Contains(i)){
                 tiles[i].tag="Untagged";
-                tileMats[i].SetColor("_EmissionColor", green);
+
+                tileRenderers[i].sharedMaterial=greenmat;
             }
         }
 
         foreach (int ind in ints)
         {
             tiles[ind].tag="red";
-            tileMats[ind].SetColor("_EmissionColor", red);
+            
+            tileRenderers[ind].sharedMaterial = redmat;
         }
 
 
@@ -166,8 +199,8 @@ public class Tiles : MonoBehaviour
 
 
     void turnofftiles(){
-        foreach(Material mat in tileMats){
-            mat.SetColor("_EmissionColor", Color.black);
+        foreach(Renderer renderer in tileRenderers){
+            renderer.sharedMaterial = blackmat;
         }
     }
 
@@ -196,35 +229,42 @@ public class Tiles : MonoBehaviour
        
     }
 
-
+    public Material testmaterial;
     void lose(){
        
-         foreach (Material mat in tileMats)
+        // foreach(Renderer renderer in tileRenderers){
+        //    renderer.sharedMaterial = sharedmatduplicate;
+        //// }
+
+      
+       for (int i = 0; i < tileRenderers.Count; i++)
         {
+
+                tileRenderers[i].sharedMaterial=sharedmatduplicate;
+            
+        }
+        
             completed=0;
             // Ensure the material has emission enabled
-            mat.EnableKeyword("_EMISSION");
+            sharedmatduplicate.EnableKeyword("_EMISSION");
 
             // Animate the emission color with strength
-            DOTween.To(() => mat.GetColor("_EmissionColor"), // Get the current emission color
-                       x => mat.SetColor("_EmissionColor", x), // Set the updated emission color
+            DOTween.To(() => sharedmatduplicate.GetColor("_EmissionColor"), // Get the current emission color
+                       x => sharedmatduplicate.SetColor("_EmissionColor", x), // Set the updated emission color
                        Color.red * 5, // Target color with intensity
                        1) // Duration (1 second)
                    .SetLoops(2, LoopType.Yoyo) // Loop back and forth
                    .SetEase(Ease.OutSine)  // Smooth transition
                    .OnComplete(() => OnTweenComplete());
-        }
+        
     }
     private int completed =0;
     void OnTweenComplete()
     {
-        completed++;
 
-        if (completed == tiles.Count) 
-        {
             StartCoroutine(turnoff());
             
-        }
+        
     }
 
     IEnumerator turnoff(){
