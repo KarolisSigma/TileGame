@@ -44,20 +44,20 @@ public class Tiles : MonoBehaviour
     {
         greenmat = new Material(sharedMat);
         greenmat.SetColor("_EmissionColor", Color.green*emission);
-        greenmat.enableInstancing = false;
+        greenmat.enableInstancing = true;
 
         redmat = new Material(sharedMat);
         redmat.SetColor("_EmissionColor", Color.red*emission);
-        redmat.enableInstancing=false;
+        redmat.enableInstancing=true;
 
         blackmat = new Material(sharedMat);
         blackmat.SetColor("_EmissionColor", Color.black*0);
-        blackmat.enableInstancing=false;
+        blackmat.enableInstancing=true;
 
 
         sharedmatduplicate = new Material(sharedMat);
         sharedmatduplicate.SetColor("_EmissionColor", Color.black*0);
-        sharedmatduplicate.enableInstancing=false;
+        sharedmatduplicate.enableInstancing=true;
 
         playercode = FindObjectOfType<Player>();
         MakeTiles();
