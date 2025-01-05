@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using DG.Tweening;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -36,7 +37,7 @@ public class Tiles : MonoBehaviour
     public float density;
     private Player playercode;
 
-   
+    public Score score;
     
 
 
@@ -116,7 +117,7 @@ public class Tiles : MonoBehaviour
 
     IEnumerator changingtiles(){
         bool running = true;
-
+        
         ChangeTiles(density);
 
         while(running){
@@ -125,12 +126,14 @@ public class Tiles : MonoBehaviour
 
             if(!CheckIfRed()){
                beep.Play();
-               //yield return new WaitForSeconds(0.5f);
-               
+                score.AddScore();
+                //yield return new WaitForSeconds(0.5f);
+
 
             }
             else{
                 playercode.AddHearts(-1);
+                score.ResetMultiplier();
                 if(playercode.hearts<=0){
                     turnofftiles();
                     lose();
@@ -150,8 +153,8 @@ public class Tiles : MonoBehaviour
 
             time-=0.05f;
             density+=0.05f;
-            density = Mathf.Clamp(density, 0, 0.99f);
-            time = Mathf.Clamp(time, 0.5f, 10);
+            density = Mathf.Clamp(density, 0, 0.8f);
+            time = Mathf.Clamp(time, 2f, 10);
             
 
         }
@@ -159,6 +162,8 @@ public class Tiles : MonoBehaviour
 
 
     void ChangeTiles(float density){
+
+        
 
         List<int> ints  = new List<int>();
         int length = tiles.Count;
