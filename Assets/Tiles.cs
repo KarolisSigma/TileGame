@@ -25,8 +25,8 @@ public class Tiles : MonoBehaviour
 
 
     private int emission=2;
-    private Color red = Color.red;
-    private Color green = Color.green;
+    public Color red = Color.red;
+    public Color green = Color.green;
     public AudioSource beep;
     public AudioSource badbeep;
     public AudioSource losebeep;
@@ -44,11 +44,11 @@ public class Tiles : MonoBehaviour
     void Start()
     {
         greenmat = new Material(sharedMat);
-        greenmat.SetColor("_EmissionColor", Color.green*emission);
+        greenmat.SetColor("_EmissionColor", green*emission);
         greenmat.enableInstancing = true;
 
         redmat = new Material(sharedMat);
-        redmat.SetColor("_EmissionColor", Color.red*emission);
+        redmat.SetColor("_EmissionColor", red*emission);
         redmat.enableInstancing=true;
 
         blackmat = new Material(sharedMat);
@@ -66,9 +66,6 @@ public class Tiles : MonoBehaviour
 
 
        StartGame();
-        //flash(Color.yellow, 2, 0.5f);
-        //MakeRoom();
-        //lose();
 
     }
 
@@ -83,8 +80,7 @@ public class Tiles : MonoBehaviour
     }
 
     void MakeTiles(){
-        red*=emission;
-        green*=emission;
+
         int iteration = 0;
         for (int x = 0; x < size.x; x++)
         {

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 using UnityEngine.UI;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 public class Player : MonoBehaviour
 {
   
@@ -79,6 +81,7 @@ public class Player : MonoBehaviour
         rotationX = Mathf.Clamp(rotationX, -90f, 90f); 
         playerCamera.localRotation = Quaternion.Euler(rotationX, 0f, 0f);
     }
+
 
 
 

@@ -773,6 +773,8 @@ MonoBehaviour:
   parent: {fileID: 666232871}
   roomPrefab: {fileID: 8062037849891378410, guid: c5e95be7e723f144f8212504e089c164,
     type: 3}
+  red: {r: 0.15011235, g: 0.12179603, b: 0.16037738, a: 1}
+  green: {r: 1, g: 0.2783019, b: 0.87945694, a: 1}
   beep: {fileID: 948817324}
   badbeep: {fileID: 948817325}
   losebeep: {fileID: 948817327}
@@ -1657,6 +1659,7 @@ MonoBehaviour:
   heartSprite: {fileID: 21300000, guid: 8a4f4bc813455d946ae7c52536f189ca, type: 3}
   fullheart: {r: 0.78431374, g: 0.3137255, b: 0.3137255, a: 1}
   emptyheart: {r: 0.15686275, g: 0.09803922, b: 0.09803922, a: 1}
+  postProcessVolume: {fileID: 832575518}
 --- !u!143 &1341486724
 CharacterController:
   m_ObjectHideFlags: 0
