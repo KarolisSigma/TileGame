@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 using UnityEngine.UI;
-using UnityEngine.Rendering;
-using UnityEngine.Rendering.Universal;
+
 public class Player : MonoBehaviour
 {
   
@@ -21,9 +20,12 @@ public class Player : MonoBehaviour
     public Color emptyheart;
 
     private float rotationX = 0f; 
+   
     
 
     void Start(){
+        Application.targetFrameRate=60;
+
         hearts=maxhearts;
         playerCamera = Camera.main.GetComponent<Transform>();
         controller = GetComponent<CharacterController>();

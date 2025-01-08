@@ -39,7 +39,7 @@ public class Tiles : MonoBehaviour
 
     public Score score;
     
-
+    public Indicator indicator;
 
     void Start()
     {
@@ -159,7 +159,7 @@ public class Tiles : MonoBehaviour
 
     void ChangeTiles(float density){
 
-        
+        indicator.checkagain=true;
 
         List<int> ints  = new List<int>();
         int length = tiles.Count;
