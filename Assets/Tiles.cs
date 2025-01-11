@@ -40,6 +40,7 @@ public class Tiles : MonoBehaviour
     public Score score;
     
     public Indicator indicator;
+    public TimeBar timeBar;
 
     void Start()
     {
@@ -118,7 +119,8 @@ public class Tiles : MonoBehaviour
 
         while(running){
             
-            yield return new WaitForSeconds(time - 0.5f);
+            timeBar.RestartTimer(time);
+            yield return new WaitForSeconds(time);
 
             if(!CheckIfRed()){
                beep.Play();
