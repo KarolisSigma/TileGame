@@ -43,9 +43,4 @@ public class Score : MonoBehaviour
         UpdateUi();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

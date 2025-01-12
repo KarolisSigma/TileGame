@@ -1,9 +1,7 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using DG.Tweening;
-using Unity.VisualScripting;
+using TMPro;
 using UnityEngine;
 
 public class Tiles : MonoBehaviour
@@ -41,9 +39,13 @@ public class Tiles : MonoBehaviour
     
     public Indicator indicator;
     public TimeBar timeBar;
+    public GameObject gameOverPanel;
+
+    public TextMeshProUGUI scores;
 
     void Start()
     {
+        gameOverPanel.SetActive(false);
         greenmat = new Material(sharedMat);
         greenmat.SetColor("_EmissionColor", green*emission);
         greenmat.enableInstancing = true;
@@ -125,7 +127,7 @@ public class Tiles : MonoBehaviour
             if(!CheckIfRed()){
                beep.Play();
                 score.AddScore();
-                //yield return new WaitForSeconds(0.5f);
+                
 
 
             }
@@ -137,6 +139,7 @@ public class Tiles : MonoBehaviour
                     lose();
                     running=false;
                     losebeep.Play();
+                    
                     
                 }
                 else{
@@ -205,6 +208,7 @@ public class Tiles : MonoBehaviour
         foreach(Renderer renderer in tileRenderers){
             renderer.sharedMaterial = blackmat;
         }
+
     }
 
     #region functions
@@ -224,20 +228,14 @@ public class Tiles : MonoBehaviour
             {
                 
                 return true;
-            }else{
-                //showtile(hit);
             }
         }
         return false;
        
     }
 
-    public Material testmaterial;
     void lose(){
        
-        // foreach(Renderer renderer in tileRenderers){
-        //    renderer.sharedMaterial = sharedmatduplicate;
-        //// }
 
       
        for (int i = 0; i < tileRenderers.Count; i++)
@@ -247,21 +245,18 @@ public class Tiles : MonoBehaviour
             
         }
         
-            completed=0;
-            // Ensure the material has emission enabled
+            
             sharedmatduplicate.EnableKeyword("_EMISSION");
-
-            // Animate the emission color with strength
-            DOTween.To(() => sharedmatduplicate.GetColor("_EmissionColor"), // Get the current emission color
-                       x => sharedmatduplicate.SetColor("_EmissionColor", x), // Set the updated emission color
-                       Color.red * 5, // Target color with intensity
-                       1) // Duration (1 second)
-                   .SetLoops(2, LoopType.Yoyo) // Loop back and forth
-                   .SetEase(Ease.OutSine)  // Smooth transition
+            DOTween.To(() => sharedmatduplicate.GetColor("_EmissionColor"),
+                       x => sharedmatduplicate.SetColor("_EmissionColor", x),
+                       Color.red * 5,
+                       1)
+                   .SetLoops(2, LoopType.Yoyo)
+                   .SetEase(Ease.OutSine)
                    .OnComplete(() => OnTweenComplete());
         
     }
-    private int completed =0;
+
     void OnTweenComplete()
     {
 
@@ -273,41 +268,27 @@ public class Tiles : MonoBehaviour
     IEnumerator turnoff(){
         yield return new WaitForSeconds(1);
         turnofftiles();
+        GameOver();
     }
 
+    public Score scoremanager;
 
-    void flash(Color color, float strength, float duration){
-        foreach (Material mat in tileMats)
-        {
-            // Ensure the material has emission enabled
-            mat.EnableKeyword("_EMISSION");
+    void GameOver() {
+        gameOverPanel.SetActive(true);
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
 
-            // Animate the emission color with strength
-            DOTween.To(() => mat.GetColor("_EmissionColor"), // Get the current emission color
-                       x => mat.SetColor("_EmissionColor", x), // Set the updated emission color
-                       color * strength, // Target color with intensity
-                       duration) // Duration (1 second)
-                   .SetLoops(2, LoopType.Yoyo) // Loop back and forth
-                   .SetEase(Ease.InOutSine);  // Smooth transition
+        int score = scoremanager.score;
+        int highscore = PlayerPrefs.GetInt("Highscore");
+        if (score > highscore) {
+            PlayerPrefs.SetInt("Highscore", score);
+            highscore = score;
         }
+
+        scores.text = $"Score: {score}\nHighscore: {highscore}";
     }
 
-    
-    void showtile(RaycastHit hit){
 
-        Material mat = tileMats[Convert.ToInt16(hit.collider.name)];
-
-        mat.EnableKeyword("_EMISSION");
-
-        Color col = mat.GetColor("_EmissionColor");
-        mat.SetColor("_EmissionColor", col*4f);
-        // Animate the emission color with the target intensity
-        DOTween.To(() => mat.GetColor("_EmissionColor"), // Get current emission color
-                   x => mat.SetColor("_EmissionColor", x), // Set the updated emission color
-                   col, // Target color (increase intensity by a factor of 5)
-                   0.5f) // Duration (0.5 seconds)
-               .SetLoops(1, LoopType.Yoyo) // Loop twice, going up and down
-               .SetEase(Ease.InFlash);  // Smooth bouncing transition
-    }
+  
     #endregion
 }

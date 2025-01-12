@@ -134,7 +134,7 @@ GameObject:
   - component: {fileID: 395961843}
   - component: {fileID: 395961842}
   m_Layer: 5
-  m_Name: txt
+  m_Name: tilegametxt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
