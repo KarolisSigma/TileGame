@@ -139,11 +139,14 @@ public class Tiles : MonoBehaviour
                     lose();
                     running=false;
                     losebeep.Play();
+
                     
                     
                 }
                 else{
                     badbeep.Play();
+                    time += 0.3f;
+                    density -= 0.2f;
                 }
                 
             }
@@ -154,8 +157,8 @@ public class Tiles : MonoBehaviour
 
             time-=0.05f;
             density+=0.05f;
-            density = Mathf.Clamp(density, 0, 0.8f);
-            time = Mathf.Clamp(time, 2f, 10);
+            density = Mathf.Clamp(density, 0, 0.95f);
+            time = Mathf.Clamp(time, 1.5f, 10);
             
 
         }
